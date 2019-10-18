@@ -56,7 +56,7 @@ su - zenoss -c "mkdir -p ${ZENHOME}/var/zauth"
 su - zenoss -c "mkdir -p ${ZENHOME}/libexec"
 su - zenoss -c "ln -s ${ZENHOME}/etc/zauth/zauth_supervisor.conf ${ZENHOME}/etc/supervisor/zauth_supervisor.conf"
 
-su - zenoss -c "pip install --no-index  ${ZENHOME}/dist/*.whl"
+su - zenoss -c "[ -d ${ZENHOME}/dist -a ! -z \"$(find ${ZENHOME}/dist/ -type f -name \*.whl)\" ] && pip install --no-index ${ZENHOME}/dist/*.whl || true"
 su - zenoss -c "mv ${ZENHOME}/legacy/sitecustomize.py ${ZENHOME}/lib/python2.7/"
 su - zenoss -c "rm -rf ${ZENHOME}/dist ${ZENHOME}/legacy"
 su - zenoss -c "[ -f ${ZENHOME}/setup.py ] && pip install -e ${ZENHOME} || echo No setup.py"
