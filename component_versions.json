@@ -46,8 +46,9 @@
     {
         "name": "zenoss-prodbin",
         "type": "jenkins",
-        "jenkins.jobURL": "http://platform-jenkins.zenoss.eng/job/Components/job/zenoss-prodbin/job/develop",
-        "version": "develop"
+        "jenkins.server": "http://platform-jenkins.zenoss.eng",
+        "jenkins.job": "TestBuilds/job/jpeacock/job/build_prodbin_branch",
+        "version": "feature/installable"
     },
     {
         "URL": "http://zenpip.zenoss.eng/packages/zenoss.protocols-{version}-py2-none-any.whl",
