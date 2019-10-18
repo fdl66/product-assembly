@@ -37,7 +37,7 @@ component_versions: component_info
 	@echo "export VERSION=$(VERSION)" >> component_info/versions.sh
 
 component_info:
-	@mkdir component_info
+	@mkdir $@
 
 $(SHORT_VERSION).x/pull-docker-images.sh:
 	@mkdir -p $(SHORT_VERSION).x
