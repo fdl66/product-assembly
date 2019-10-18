@@ -130,13 +130,14 @@ node('build-zenoss-product') {
         }
 
         stage('Push image') {
-            docker.withRegistry('https://gcr.io', 'gcr:zing-registry-188222') {
-                customImage.push()
-                if (PINNED == "true") {
-                    //add a pinned tag so we know if this image is viable for promotion
-                    customImage.push("${imageTag}-pinned")
-                }
-            }
+            echo "skipped"
+            // docker.withRegistry('https://gcr.io', 'gcr:zing-registry-188222') {
+            //     customImage.push()
+            //     if (PINNED == "true") {
+            //         //add a pinned tag so we know if this image is viable for promotion
+            //         customImage.push("${imageTag}-pinned")
+            //     }
+            // }
         }
 
         stage('Build mariadb image') {
@@ -151,62 +152,65 @@ node('build-zenoss-product') {
         }
 
         stage('Push mariadb image') {
-            docker.withRegistry('https://gcr.io', 'gcr:zing-registry-188222') {
-                mariadbImage.push()
-                if (PINNED == "true") {
-                    //add a pinned tag so we know if this image is viable for promotion
-                    mariadbImage.push("${imageTag}-pinned")
-                }
-            }
+            echo "Skipped"
+            // docker.withRegistry('https://gcr.io', 'gcr:zing-registry-188222') {
+            //     mariadbImage.push()
+            //     if (PINNED == "true") {
+            //         //add a pinned tag so we know if this image is viable for promotion
+            //         mariadbImage.push("${imageTag}-pinned")
+            //     }
+            // }
         }
 
         stage('Compile service definitions and build RPM') {
-            // Run the checkout in a separate directory.
-            dir("svcdefs") {
-                // We have to clean it ourselves, because Jenkins doesn't (apparently)
-                sh("rm -rf build")
-                sh("mkdir -p build/zenoss-service")
-                dir("build/zenoss-service") {
-                    echo "Cloning zenoss-service - ${SVCDEF_GIT_REF} with credentialsId=${GIT_CREDENTIAL_ID}"
-                    // NOTE: The 'master' branch name here is only used to clone the github repo.
-                    //       The next checkout command will align the build with the correct target revision.
-                    git(
-                        branch: 'master',
-                        credentialsId: '${GIT_CREDENTIAL_ID}',
-                        url: 'https://github.com/zenoss/zenoss-service.git'
-                    )
-                    sh("git checkout ${SVCDEF_GIT_REF}")
-                    // Log the current SHA of zenoss-service so, when building from a branch,
-                    // we know exactly which commit went into a particular build
-                    sh("echo zenoss/zenoss-service git SHA = \$(git rev-parse HEAD)")
-                }
-                // Note that SVDEF_GIT_READY=true tells the make to NOT attempt a git operation on its own
-                // because we need to use Jenkins credentials instead
-                withEnv([
-                    "BUILD_NUMBER=${PRODUCT_BUILD_NUMBER}",
-                    "IMAGE_NUMBER=${PRODUCT_BUILD_NUMBER}",
-                    "MATURITY=${MATURITY}",
-                    "SVCDEF_GIT_READY=true",
-                    "TARGET_PRODUCT=${TARGET_PRODUCT}"
-                ]) {
-                    sh("make build")
-                }
-            }
-            sh("mkdir -p artifacts")
-            sh("cp svcdefs/build/zenoss-service/output/*.json artifacts/.")
-            dir("artifacts") {
-                sh("for file in *json; do tar -cvzf \$file.tgz \$file; done")
-            }
-            archive includes: 'artifacts/*.json*'
+            echo "Skipped"
+            // // Run the checkout in a separate directory.
+            // dir("svcdefs") {
+            //     // We have to clean it ourselves, because Jenkins doesn't (apparently)
+            //     sh("rm -rf build")
+            //     sh("mkdir -p build/zenoss-service")
+            //     dir("build/zenoss-service") {
+            //         echo "Cloning zenoss-service - ${SVCDEF_GIT_REF} with credentialsId=${GIT_CREDENTIAL_ID}"
+            //         // NOTE: The 'master' branch name here is only used to clone the github repo.
+            //         //       The next checkout command will align the build with the correct target revision.
+            //         git(
+            //             branch: 'master',
+            //             credentialsId: '${GIT_CREDENTIAL_ID}',
+            //             url: 'https://github.com/zenoss/zenoss-service.git'
+            //         )
+            //         sh("git checkout ${SVCDEF_GIT_REF}")
+            //         // Log the current SHA of zenoss-service so, when building from a branch,
+            //         // we know exactly which commit went into a particular build
+            //         sh("echo zenoss/zenoss-service git SHA = \$(git rev-parse HEAD)")
+            //     }
+            //     // Note that SVDEF_GIT_READY=true tells the make to NOT attempt a git operation on its own
+            //     // because we need to use Jenkins credentials instead
+            //     withEnv([
+            //         "BUILD_NUMBER=${PRODUCT_BUILD_NUMBER}",
+            //         "IMAGE_NUMBER=${PRODUCT_BUILD_NUMBER}",
+            //         "MATURITY=${MATURITY}",
+            //         "SVCDEF_GIT_READY=true",
+            //         "TARGET_PRODUCT=${TARGET_PRODUCT}"
+            //     ]) {
+            //         sh("make build")
+            //     }
+            // }
+            // sh("mkdir -p artifacts")
+            // sh("cp svcdefs/build/zenoss-service/output/*.json artifacts/.")
+            // dir("artifacts") {
+            //     sh("for file in *json; do tar -cvzf \$file.tgz \$file; done")
+            // }
+            // archive includes: 'artifacts/*.json*'
         }
 
         stage('Upload service definitions') {
-            googleStorageUpload(
-                bucket: "gs://cse_artifacts/${TARGET_PRODUCT}/${MATURITY}/${ZENOSS_VERSION}/${PRODUCT_BUILD_NUMBER}",
-                credentialsId: 'zing-registry-188222',
-                pathPrefix: 'artifacts/',
-                pattern: 'artifacts/*tgz'
-            )
+            echo "Skipped"
+            // googleStorageUpload(
+            //     bucket: "gs://cse_artifacts/${TARGET_PRODUCT}/${MATURITY}/${ZENOSS_VERSION}/${PRODUCT_BUILD_NUMBER}",
+            //     credentialsId: 'zing-registry-188222',
+            //     pathPrefix: 'artifacts/',
+            //     pattern: 'artifacts/*tgz'
+            // )
         }
 
         stage('3rd-party Python packages check') {
