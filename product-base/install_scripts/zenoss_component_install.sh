@@ -56,7 +56,6 @@ su - zenoss -c "mkdir -p ${ZENHOME}/var/zauth"
 su - zenoss -c "mkdir -p ${ZENHOME}/libexec"
 su - zenoss -c "ln -s ${ZENHOME}/etc/zauth/zauth_supervisor.conf ${ZENHOME}/etc/supervisor/zauth_supervisor.conf"
 
-su - zenoss -c "[ -d ${ZENHOME}/dist -a ! -z \"$(find ${ZENHOME}/dist/ -type f -name \*.whl)\" ] && pip install --no-index ${ZENHOME}/dist/*.whl || true"
 su - zenoss -c "mv ${ZENHOME}/legacy/sitecustomize.py ${ZENHOME}/lib/python2.7/"
 su - zenoss -c "rm -rf ${ZENHOME}/dist ${ZENHOME}/legacy"
 su - zenoss -c "[ -f ${ZENHOME}/setup.py ] && pip install -e ${ZENHOME} || echo No setup.py"
@@ -145,12 +144,6 @@ cp -R /tmp/modelindex/zenoss/modelindex/solr/configsets /opt/solr/server/solr/
 chmod -R g+rw,o+r,+X ${ZENHOME}/*
 
 # TODO add upgrade templates to /root  - probably done in core/rm image builds
-
-echo "TODO REMOVE THIS AFTER PRODBIN IS UPDATED TO FILTER OUT MIGRATE TESTS"
-rm -rf ${ZENHOME}/Products/ZenModel/migrate/tests
-
-echo "TODO REMOVE THIS AFTER PRODBIN IS UPDATED TO FILTER OUT ZenUITests-based TESTS"
-rm -rf ${ZENHOME}/Products/ZenUITests
 
 echo "Cleaning up after install..."
 find ${ZENHOME} -name \*.py[co] -delete
