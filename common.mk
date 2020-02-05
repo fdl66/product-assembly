@@ -27,7 +27,7 @@ build-mariadb: ../mariadb/Dockerfile
 	docker build -t $(MARIADB_TAG) ../mariadb
 
 ../mariadb/Dockerfile: ../mariadb/Dockerfile.in
-	@sed -e 's#%FROM_IMAGE%#$(TAG)#' ../mariadb/Dockerfile.in > $@
+	@sed -e 's#%FROM_IMAGE%#$(TAG)#' $^ > $@
 
 zenpacks:
 	@mkdir $@

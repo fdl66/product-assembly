@@ -51,10 +51,17 @@
 #                 If not specifeid, defaults to ../devimg/zp_blacklist.json
 #
 include ../versions.mk
+
+ZENDEV := $(shell which zendev)
+ifeq ($(ZENDEV),)
+DEV_ENV ?= metis
+else
+DEV_ENV ?= $(shell zendev env)
+endif
+
 IMAGENAME  = devimg
 MARIADB = mariadb
 MARIADB_TAG = zendev/$(MARIADB):$(DEV_ENV)
-DEV_ENV ?= metis
 TAG = zendev/$(IMAGENAME):$(DEV_ENV)
 BASE_TAG = zendev/$(IMAGENAME)-base:$(DEV_ENV)
 DIR = ${CURDIR}
@@ -130,6 +137,7 @@ clean:
 	sudo rm -rf $(ZENDEV_ROOT)/zenhome/* $(ZENDEV_ROOT)/var_zenoss/*
 	@echo "REMOVING $(MARIADB_TAG) (if any)..."
 	-docker rmi -f $(MARIADB_TAG)
+	-rm ../mariadb/Dockerfile
 
 build-devbase:
 	@echo "Building $(BASE_TAG) ..."
@@ -138,8 +146,8 @@ build-devbase:
 build-mariadb: ../mariadb/Dockerfile
 	docker build -t $(MARIADB_TAG) ../mariadb
 
-../mariadb/Dockerfile:
-	@sed -e 's#%FROM_IMAGE%#$(TAG)#' ../mariadb/Dockerfile.in > $@
+../mariadb/Dockerfile: ../mariadb/Dockerfile.in
+	@sed -e 's#%FROM_IMAGE%#$(TAG)#' $^ > $@
 
 # Initialize our local ZENHOME using the contents from the initial devimg
 initialize-zenhome: make-dirs
